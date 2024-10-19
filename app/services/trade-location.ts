@@ -18,7 +18,8 @@ import TradeLocationHistory from 'better-trading/services/trade-location/history
 import config from 'better-trading/config/environment';
 
 // Constants
-const BASE_URL = 'https://www.pathofexile.com/trade';
+//const BASE_URL = 'https://www.pathofexile.com/trade';
+//const BASE_URL = 'https://poe.game.qq.com/trade';
 
 export default class TradeLocation extends Service.extend(Evented) {
   @service('trade-location/history')
@@ -67,7 +68,9 @@ export default class TradeLocation extends Service.extend(Evented) {
     (this.locationPollingTask as Task).perform();
   }
 
-  initialize() {
+  initialize(host: string) {
+    this.BASE_URL = `https://${host}/trade`;
+    
     window.addEventListener('focus', this.startLocationPolling.bind(this));
     window.addEventListener('blur', this.stopLocationPolling.bind(this));
 
@@ -76,7 +79,7 @@ export default class TradeLocation extends Service.extend(Evented) {
 
   // in non-PC realms, league should be of form "realm/LeagueName", eg "xbox/Legion"
   getTradeUrl(type: string, slug: string, league: string) {
-    return [BASE_URL, type, league, slug].join('/');
+    return [this.BASE_URL, type, league, slug].join('/');
   }
 
   compareTradeLocations(locationA: TradeLocationStruct, locationB: TradeLocationStruct) {
